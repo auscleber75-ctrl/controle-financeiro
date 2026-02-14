@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Controle de Grana</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="wrap">
+    <div class="title">
+      <h1>Controle de Grana</h1>
+      <p>Renda • Contas • Aportes • Dívida • Reserva (salva no navegador)</p>
+    </div>
+    <div class="actions">
+      <button id="btnExport" class="btn ghost">Exportar JSON</button>
+      <label class="btn ghost file">
+        Importar JSON
+        <input id="fileImport" type="file" accept="application/json" />
+      </label>
+      <button id="btnReset" class="btn danger">Zerar dados</button>
+    </div>
+  </header>
+
+  <main class="wrap grid">
+    <section class="card">
+      <h2>Entradas do mês</h2>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Renda (Uber / sua)</label>
+          <input id="incomeYou" type="number" min="0" step="0.01" placeholder="Ex: 7200" />
+        </div>
+        <div class="field">
+          <label>Renda (Mulher)</label>
+          <input id="incomeWife" type="number" min="0" step="0.01" placeholder="Ex: 3000" />
+        </div>
+
+        <div class="field">
+          <label>Extras (por fora)</label>
+          <input id="incomeExtra" type="number" min="0" step="0.01" placeholder="Ex: 500" />
+        </div>
+        <div class="field">
+          <label>Contas fixas</label>
+          <input id="fixedCosts" type="number" min="0" step="0.01" placeholder="Ex: 5000" />
+        </div>
+
+        <div class="field">
+          <label>Aporte em dívidas (mês)</label>
+          <input id="debtPay" type="number" min="0" step="0.01" placeholder="Ex: 4000" />
+        </div>
+        <div class="field">
+          <label>Reserva de emergência (mês)</label>
+          <input id="reserveAdd" type="number" min="0" step="0.01" placeholder="Ex: 1200" />
+        </div>
+
+        <div class="field">
+          <label>Dívida total atual</label>
+          <input id="debtTotal" type="number" min="0" step="0.01" placeholder="Ex: 60000" />
+        </div>
+        <div class="field">
+          <label>Reserva atual (se já tiver)</label>
+          <input id="reserveTotal" type="number" min="0" step="0.01" placeholder="Ex: 2000" />
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="btnSave" class="btn">Salvar</button>
+        <button id="btnCloseMonth" class="btn ok">Fechar mês (salvar histórico)</button>
+      </div>
+
+      <p class="hint">
+        Dica: isso não envia nada pra internet. Fica só no seu navegador (localStorage).
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Resumo</h2>
+
+      <div class="stats">
+        <div class="stat">
+          <span>Renda total</span>
+          <strong id="sumIncome">R$ 0,00</strong>
+        </div>
+        <div class="stat">
+          <span>Gastos fixos</span>
+          <strong id="sumFixed">R$ 0,00</strong>
+        </div>
+        <div class="stat">
+          <span>Aportes (dívida + reserva)</span>
+          <strong id="sumAports">R$ 0,00</strong>
+        </div>
+        <div class="stat">
+          <span>Sobra do mês</span>
+          <strong id="sumLeft" class="good">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="stats">
+        <div class="stat">
+          <span>Dívida restante (estimada)</span>
+          <strong id="sumDebtAfter">R$ 0,00</strong>
+        </div>
+        <div class="stat">
+          <span>Meses p/ quitar (estim.)</span>
+          <strong id="sumMonths">—</strong>
+        </div>
+        <div class="stat">
+          <span>Reserva após aporte</span>
+          <strong id="sumReserveAfter">R$ 0,00</strong>
+        </div>
+        <div class="stat">
+          <span>Meta reserva (6x contas)</span>
+          <strong id="sumReserveGoal">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="barWrap">
+        <div class="barLabel">
+          <span>Alocação do mês</span>
+          <span id="sumPerc">—</span>
+        </div>
+        <div class="bar">
+          <div id="barFixed" class="seg fixed" title="Fixos"></div>
+          <div id="barDebt" class="seg debt" title="Dívida"></div>
+          <div id="barReserve" class="seg reserve" title="Reserva"></div>
+          <div id="barLeft" class="seg left" title="Sobra"></div>
+        </div>
+        <div class="legend">
+          <span><i class="dot fixed"></i> Fixos</span>
+          <span><i class="dot debt"></i> Dívida</span>
+          <span><i class="dot reserve"></i> Reserva</span>
+          <span><i class="dot left"></i> Sobra</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card full">
+      <h2>Histórico (meses fechados)</h2>
+      <div class="row">
+        <button id="btnClearHistory" class="btn ghost">Limpar histórico</button>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mês</th>
+              <th>Renda</th>
+              <th>Fixos</th>
+              <th>Dívida</th>
+              <th>Reserva</th>
+              <th>Sobra</th>
+              <th>Dívida após</th>
+              <th>Reserva após</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="wrap footer">
+    <small>Controle simples • GitHub Pages • localStorage</small>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
