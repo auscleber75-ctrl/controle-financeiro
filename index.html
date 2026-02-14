@@ -8,53 +8,45 @@
 </head>
 <body>
 
-  <!-- LOCK SCREEN -->
-  <div id="lockScreen" class="lock hidden">
-    <div class="lockCard">
-      <h2>🔒 Protegido por PIN</h2>
-      <p>Digite seu PIN para acessar.</p>
-      <div class="lockRow">
-        <input id="pinInput" type="password" inputmode="numeric" placeholder="PIN" />
-        <button id="btnUnlock" class="btn ok">Entrar</button>
-      </div>
-      <small class="muted">Obs: é proteção local (não é “banco”).</small>
-    </div>
-  </div>
-
-  <header class="wrap">
-    <div class="title">
+<header class="header">
+  <div class="wrap headerInner">
+    <div>
       <h1>Controle de Grana</h1>
-      <p>Renda • Contas • Aportes • Dívida • Reserva • Metas • Gráficos (salva no navegador)</p>
+      <p>Rendas • Gastos • Dívidas • Reserva • Histórico</p>
     </div>
 
-    <div class="actions">
-      <button id="btnExport" class="btn ghost">Exportar JSON</button>
+    <div class="headerBtns">
+      <button type="button" id="btnExport" class="btn ghost">Exportar</button>
       <label class="btn ghost file">
-        Importar JSON
+        Importar
         <input id="fileImport" type="file" accept="application/json" />
       </label>
-      <button id="btnReset" class="btn danger">Zerar dados</button>
+      <button type="button" id="btnReset" class="btn danger">Zerar</button>
     </div>
-  </header>
+  </div>
+</header>
 
 <main class="wrap">
-  <!-- NAV TABS -->
+
+  <!-- TABS -->
   <nav class="tabs" id="tabs">
-    <button class="tab active" data-tab="dash">Dashboard</button>
-    <button class="tab" data-tab="income">Rendas</button>
-    <button class="tab" data-tab="costs">Gastos</button>
-    <button class="tab" data-tab="debts">Dívidas</button>
-    <button class="tab" data-tab="reserve">Reserva</button>
-    <button class="tab" data-tab="history">Histórico</button>
-    <button class="tab" data-tab="settings">Config</button>
+    <button type="button" class="tab" data-tab="dash">Dashboard</button>
+    <button type="button" class="tab" data-tab="income">Rendas</button>
+    <button type="button" class="tab" data-tab="costs">Gastos</button>
+    <button type="button" class="tab" data-tab="debts">Dívidas</button>
+    <button type="button" class="tab" data-tab="reserve">Reserva</button>
+    <button type="button" class="tab" data-tab="history">Histórico</button>
   </nav>
 
-  <!-- DASHBOARD -->
-  <section class="page active" id="page-dash">
+  <!-- DASH -->
+  <section class="page" id="page-dash">
     <div class="grid">
       <section class="card">
-        <h2>Resumo</h2>
-        <!-- mantém os mesmos IDs do resumo -->
+        <div class="cardTop">
+          <h2>Resumo do mês</h2>
+          <button type="button" id="btnSave" class="btn">Salvar tudo</button>
+        </div>
+
         <div class="stats">
           <div class="stat"><span>Renda total</span><strong id="sumIncome">R$ 0,00</strong></div>
           <div class="stat"><span>Gastos fixos</span><strong id="sumFixed">R$ 0,00</strong></div>
@@ -66,9 +58,9 @@
 
         <div class="stats">
           <div class="stat"><span>Dívida restante (estim.)</span><strong id="sumDebtAfter">R$ 0,00</strong></div>
-          <div class="stat"><span>Meses p/ quitar (estim.)</span><strong id="sumMonths">—</strong></div>
+          <div class="stat"><span>Meses pra quitar (sem juros)</span><strong id="sumMonths">—</strong></div>
           <div class="stat"><span>Reserva após aporte</span><strong id="sumReserveAfter">R$ 0,00</strong></div>
-          <div class="stat"><span>Meta reserva (auto)</span><strong id="sumReserveGoal">R$ 0,00</strong></div>
+          <div class="stat"><span>Meta reserva (6x fixos)</span><strong id="sumReserveGoal">R$ 0,00</strong></div>
         </div>
 
         <div class="barWrap">
@@ -89,240 +81,174 @@
             <span><i class="dot left"></i> Sobra</span>
           </div>
         </div>
+
+        <div class="row">
+          <button type="button" id="btnCloseMonth" class="btn ok">Fechar mês</button>
+          <small class="muted">Fechar mês salva no histórico e atualiza dívida/reserva automaticamente.</small>
+        </div>
       </section>
 
       <section class="card">
-        <h2>Gráficos rápidos</h2>
-        <div class="chartBox">
-          <h3 class="sub">Dívida x Reserva</h3>
-          <canvas id="chartHistory" width="520" height="260"></canvas>
-        </div>
-        <div class="chartBox">
-          <h3 class="sub">Distribuição do mês</h3>
-          <canvas id="chartAlloc" width="520" height="260"></canvas>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <!-- RENDAS -->
-  <section class="page" id="page-income">
-    <div class="grid">
-      <section class="card full">
-        <h2>Rendas</h2>
-
+        <h2>Metas rápidas</h2>
         <div class="grid2">
-          <div class="field">
-            <label>Modo Uber</label>
-            <select id="uberMode">
-              <option value="manual">Manual (digitar renda mensal)</option>
-              <option value="auto">Automático (diária + bônus + dias)</option>
-              <option value="weekly">Semanal (por semana)</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Dias no mês</label>
-            <select id="workDays">
-              <option value="30">30 dias</option>
-              <option value="25">25 dias</option>
-            </select>
-          </div>
-        </div>
-
-        <div id="uberAutoBox" class="subbox hidden">
-          <h3 class="sub">Uber automático</h3>
-          <div class="grid2">
-            <div class="field">
-              <label>Diária (R$)</label>
-              <input id="uberDaily" type="number" min="0" step="0.01" />
-            </div>
-            <div class="field">
-              <label>Bônus (%)</label>
-              <input id="uberBonusPct" type="number" min="0" step="0.01" />
-            </div>
-          </div>
-        </div>
-
-        <div id="uberWeeklyBox" class="subbox hidden">
-          <h3 class="sub">Uber semanal</h3>
-          <div class="tableWrap">
-            <table>
-              <thead><tr><th>Semana</th><th>Entrou (R$)</th></tr></thead>
-              <tbody>
-                <tr><td>Semana 1</td><td><input id="w1" class="tableInput" type="number" min="0" step="0.01"/></td></tr>
-                <tr><td>Semana 2</td><td><input id="w2" class="tableInput" type="number" min="0" step="0.01"/></td></tr>
-                <tr><td>Semana 3</td><td><input id="w3" class="tableInput" type="number" min="0" step="0.01"/></td></tr>
-                <tr><td>Semana 4</td><td><input id="w4" class="tableInput" type="number" min="0" step="0.01"/></td></tr>
-                <tr><td>Semana 5</td><td><input id="w5" class="tableInput" type="number" min="0" step="0.01"/></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="grid2">
-          <div class="field">
-            <label>Sua renda (Uber) — manual ou calculada</label>
-            <input id="incomeYou" type="number" min="0" step="0.01" />
-          </div>
-          <div class="field">
-            <label>Renda da esposa</label>
-            <input id="incomeWife" type="number" min="0" step="0.01" />
-          </div>
-          <div class="field">
-            <label>Extras (por fora)</label>
-            <input id="incomeExtra" type="number" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <div class="row">
-          <button id="btnSave" class="btn">Salvar</button>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <!-- GASTOS -->
-  <section class="page" id="page-costs">
-    <div class="grid">
-      <section class="card full">
-        <h2>Gastos</h2>
-        <div class="grid2">
-          <div class="field">
-            <label>Contas fixas (total)</label>
-            <input id="fixedCosts" type="number" min="0" step="0.01" />
-          </div>
-          <!-- Se quiser, depois eu adiciono “gastos variáveis” por categoria -->
-        </div>
-        <div class="row">
-          <button id="btnSaveCosts" class="btn">Salvar</button>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <!-- DÍVIDAS -->
-  <section class="page" id="page-debts">
-    <div class="grid">
-      <section class="card full">
-        <h2>Dívidas</h2>
-
-        <div class="grid2">
-          <div class="field">
-            <label>Dívida total atual</label>
-            <input id="debtTotal" type="number" min="0" step="0.01" />
-          </div>
-          <div class="field">
-            <label>Aporte mensal em dívidas</label>
-            <input id="debtPay" type="number" min="0" step="0.01" />
-          </div>
           <div class="field">
             <label>Meta: ficar sem dívidas até</label>
             <input id="goalDebtDate" type="month" />
           </div>
-        </div>
-
-        <div class="row">
-          <button id="btnSaveDebts" class="btn">Salvar</button>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <!-- RESERVA -->
-  <section class="page" id="page-reserve">
-    <div class="grid">
-      <section class="card full">
-        <h2>Reserva</h2>
-
-        <div class="grid2">
-          <div class="field">
-            <label>Reserva atual</label>
-            <input id="reserveTotal" type="number" min="0" step="0.01" />
-          </div>
-          <div class="field">
-            <label>Aporte mensal na reserva</label>
-            <input id="reserveAdd" type="number" min="0" step="0.01" />
-          </div>
           <div class="field">
             <label>Meta reserva (meses de contas)</label>
             <select id="goalReserveMonths">
-              <option value="3">3 meses</option>
-              <option value="6" selected>6 meses</option>
-              <option value="9">9 meses</option>
-              <option value="12">12 meses</option>
+              <option value="3">3</option>
+              <option value="6" selected>6</option>
+              <option value="9">9</option>
+              <option value="12">12</option>
             </select>
           </div>
         </div>
 
-        <div class="subbox">
-          <h3 class="sub">Carteira sugerida (reserva)</h3>
-          <p class="muted">70% Tesouro Selic • 20% CDB liquidez diária • 10% caixa (conta remunerada)</p>
+        <div class="stats">
+          <div class="stat"><span>Previsão quitação</span><strong id="goalDebtETA">—</strong></div>
+          <div class="stat"><span>Status</span><strong id="goalDebtStatus">—</strong></div>
+          <div class="stat"><span>Meta reserva (R$)</span><strong id="goalReserveValue">R$ 0,00</strong></div>
+          <div class="stat"><span>Tempo pra meta reserva</span><strong id="goalReserveETA">—</strong></div>
         </div>
 
-        <div class="row">
-          <button id="btnSaveReserve" class="btn">Salvar</button>
+        <div class="hint">
+          Dica: esse app é offline (localStorage). Exporta JSON pra backup.
         </div>
       </section>
     </div>
   </section>
 
-  <!-- HISTÓRICO -->
+  <!-- INCOME -->
+  <section class="page" id="page-income">
+    <section class="card">
+      <div class="cardTop">
+        <h2>Rendas</h2>
+        <button type="button" class="btn" data-save>Salvar</button>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Sua renda (Uber)</label>
+          <input id="incomeYou" type="number" min="0" step="0.01" placeholder="Ex: 7200" />
+        </div>
+        <div class="field">
+          <label>Renda da esposa</label>
+          <input id="incomeWife" type="number" min="0" step="0.01" placeholder="Ex: 3000" />
+        </div>
+        <div class="field">
+          <label>Extras (por fora)</label>
+          <input id="incomeExtra" type="number" min="0" step="0.01" placeholder="Ex: 500" />
+        </div>
+      </div>
+
+      <div class="hint">Aqui é só renda. Nada misturado.</div>
+    </section>
+  </section>
+
+  <!-- COSTS -->
+  <section class="page" id="page-costs">
+    <section class="card">
+      <div class="cardTop">
+        <h2>Gastos</h2>
+        <button type="button" class="btn" data-save>Salvar</button>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Contas fixas (total)</label>
+          <input id="fixedCosts" type="number" min="0" step="0.01" placeholder="Ex: 5000" />
+        </div>
+      </div>
+
+      <div class="hint">Depois eu posso adicionar “variáveis por categoria” (gasolina, mercado, etc.).</div>
+    </section>
+  </section>
+
+  <!-- DEBTS -->
+  <section class="page" id="page-debts">
+    <section class="card">
+      <div class="cardTop">
+        <h2>Dívidas</h2>
+        <button type="button" class="btn" data-save>Salvar</button>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Dívida total atual</label>
+          <input id="debtTotal" type="number" min="0" step="0.01" placeholder="Ex: 60000" />
+        </div>
+        <div class="field">
+          <label>Aporte mensal em dívidas</label>
+          <input id="debtPay" type="number" min="0" step="0.01" placeholder="Ex: 4000" />
+        </div>
+      </div>
+
+      <div class="hint">A projeção é sem juros (pra simplicidade).</div>
+    </section>
+  </section>
+
+  <!-- RESERVE -->
+  <section class="page" id="page-reserve">
+    <section class="card">
+      <div class="cardTop">
+        <h2>Reserva</h2>
+        <button type="button" class="btn" data-save>Salvar</button>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Reserva atual</label>
+          <input id="reserveTotal" type="number" min="0" step="0.01" placeholder="Ex: 2000" />
+        </div>
+        <div class="field">
+          <label>Aporte mensal na reserva</label>
+          <input id="reserveAdd" type="number" min="0" step="0.01" placeholder="Ex: 1200" />
+        </div>
+      </div>
+
+      <div class="subbox">
+        <h3 class="sub">Carteira sugerida (Reserva)</h3>
+        <p class="muted">70% Tesouro Selic • 20% CDB liquidez diária • 10% conta remunerada</p>
+      </div>
+    </section>
+  </section>
+
+  <!-- HISTORY -->
   <section class="page" id="page-history">
-    <section class="card full">
-      <h2>Histórico</h2>
-      <div class="row">
-        <button id="btnCloseMonth" class="btn ok">Fechar mês</button>
-        <button id="btnClearHistory" class="btn ghost">Limpar histórico</button>
-        <button id="btnExport2" class="btn ghost">Exportar JSON</button>
-        <label class="btn ghost file">
-          Importar JSON
-          <input id="fileImport2" type="file" accept="application/json" />
-        </label>
+    <section class="card">
+      <div class="cardTop">
+        <h2>Histórico</h2>
+        <div class="row">
+          <button type="button" id="btnClearHistory" class="btn ghost">Limpar histórico</button>
+        </div>
       </div>
 
       <div class="tableWrap">
         <table>
           <thead>
             <tr>
-              <th>Mês</th><th>Renda</th><th>Fixos</th><th>Dívida</th><th>Reserva</th><th>Sobra</th><th>Dívida após</th><th>Reserva após</th>
+              <th>Mês</th>
+              <th>Renda</th>
+              <th>Fixos</th>
+              <th>Dívida</th>
+              <th>Reserva</th>
+              <th>Sobra</th>
+              <th>Dívida após</th>
+              <th>Reserva após</th>
             </tr>
           </thead>
           <tbody id="historyBody"></tbody>
         </table>
       </div>
+
+      <div class="hint">Feche o mês no Dashboard pra alimentar esse histórico.</div>
     </section>
   </section>
 
-  <!-- CONFIG -->
-  <section class="page" id="page-settings">
-    <section class="card full">
-      <h2>Config</h2>
-
-      <h3 class="sub">PIN (proteção local)</h3>
-      <div class="grid2">
-        <div class="field">
-          <label>Novo PIN</label>
-          <input id="pinNew" type="password" inputmode="numeric" />
-        </div>
-        <div class="field">
-          <label>Confirmar PIN</label>
-          <input id="pinConfirm" type="password" inputmode="numeric" />
-        </div>
-      </div>
-
-      <div class="row">
-        <button id="btnSetPin" class="btn">Salvar PIN</button>
-        <button id="btnRemovePin" class="btn danger">Remover PIN</button>
-      </div>
-    </section>
-  </section>
 </main>
 
-  <footer class="wrap footer">
-    <small>Controle simples • GitHub Pages • localStorage</small>
-  </footer>
-
-  <script src="./app.js"></script>
+<script src="./app.js"></script>
 </body>
 </html>
