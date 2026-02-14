@@ -12,7 +12,7 @@
   <div class="wrap headerInner">
     <div>
       <h1>Controle de Grana</h1>
-      <p>Rendas • Gastos • Dívidas • Reserva • Histórico</p>
+      <p>Rendas • Gastos • Dívidas • Reserva • Histórico (salva no navegador)</p>
     </div>
 
     <div class="headerBtns">
@@ -38,13 +38,16 @@
     <button type="button" class="tab" data-tab="history">Histórico</button>
   </nav>
 
-  <!-- DASH -->
+  <!-- DASHBOARD -->
   <section class="page" id="page-dash">
     <div class="grid">
       <section class="card">
         <div class="cardTop">
           <h2>Resumo do mês</h2>
-          <button type="button" id="btnSave" class="btn">Salvar tudo</button>
+          <div class="row">
+            <button type="button" id="btnSave" class="btn">Salvar tudo</button>
+            <button type="button" id="btnCloseMonth" class="btn ok">Fechar mês</button>
+          </div>
         </div>
 
         <div class="stats">
@@ -57,39 +60,20 @@
         <hr />
 
         <div class="stats">
-          <div class="stat"><span>Dívida restante (estim.)</span><strong id="sumDebtAfter">R$ 0,00</strong></div>
-          <div class="stat"><span>Meses pra quitar (sem juros)</span><strong id="sumMonths">—</strong></div>
+          <div class="stat"><span>Dívida restante (modo simples)</span><strong id="sumDebtAfter">R$ 0,00</strong></div>
+          <div class="stat"><span>Meses p/ quitar (modo simples)</span><strong id="sumMonths">—</strong></div>
           <div class="stat"><span>Reserva após aporte</span><strong id="sumReserveAfter">R$ 0,00</strong></div>
           <div class="stat"><span>Meta reserva (6x fixos)</span><strong id="sumReserveGoal">R$ 0,00</strong></div>
         </div>
 
-        <div class="barWrap">
-          <div class="barLabel">
-            <span>Alocação do mês</span>
-            <span id="sumPerc">—</span>
-          </div>
-          <div class="bar">
-            <div id="barFixed" class="seg fixed"></div>
-            <div id="barDebt" class="seg debt"></div>
-            <div id="barReserve" class="seg reserve"></div>
-            <div id="barLeft" class="seg left"></div>
-          </div>
-          <div class="legend">
-            <span><i class="dot fixed"></i> Fixos</span>
-            <span><i class="dot debt"></i> Dívida</span>
-            <span><i class="dot reserve"></i> Reserva</span>
-            <span><i class="dot left"></i> Sobra</span>
-          </div>
-        </div>
-
-        <div class="row">
-          <button type="button" id="btnCloseMonth" class="btn ok">Fechar mês</button>
-          <small class="muted">Fechar mês salva no histórico e atualiza dívida/reserva automaticamente.</small>
+        <div class="hint">
+          “Modo simples” usa 1 dívida total (campo Dívida Total). Para controle real, use a aba Dívidas (lista + projeção).
         </div>
       </section>
 
       <section class="card">
-        <h2>Metas rápidas</h2>
+        <h2>Metas</h2>
+
         <div class="grid2">
           <div class="field">
             <label>Meta: ficar sem dívidas até</label>
@@ -113,14 +97,32 @@
           <div class="stat"><span>Tempo pra meta reserva</span><strong id="goalReserveETA">—</strong></div>
         </div>
 
+        <hr />
+
+        <h2>Resumo por diária (manual)</h2>
+        <div class="grid2">
+          <div class="field">
+            <label>Diária (R$)</label>
+            <input id="dailyValue" type="number" min="0" step="0.01" placeholder="Ex: 240" />
+          </div>
+          <div class="field">
+            <label>Fixos por dia (R$)</label>
+            <input id="dailyFixed" type="number" min="0" step="0.01" placeholder="Ex: 146" />
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><span>Sobra diária</span><strong id="dailyLeft">R$ 0,00</strong></div>
+          <div class="stat"><span>Sobra mensal (30 dias)</span><strong id="dailyLeftMonth">R$ 0,00</strong></div>
+        </div>
+
         <div class="hint">
-          Dica: esse app é offline (localStorage). Exporta JSON pra backup.
+          Você pode usar: diária 240 e fixos 146 (com 30 dias).
         </div>
       </section>
     </div>
   </section>
 
-  <!-- INCOME -->
+  <!-- RENDAS -->
   <section class="page" id="page-income">
     <section class="card">
       <div class="cardTop">
@@ -130,7 +132,7 @@
 
       <div class="grid2">
         <div class="field">
-          <label>Sua renda (Uber)</label>
+          <label>Sua renda do mês (Uber)</label>
           <input id="incomeYou" type="number" min="0" step="0.01" placeholder="Ex: 7200" />
         </div>
         <div class="field">
@@ -143,11 +145,11 @@
         </div>
       </div>
 
-      <div class="hint">Aqui é só renda. Nada misturado.</div>
+      <div class="hint">Tudo que entra no mês.</div>
     </section>
   </section>
 
-  <!-- COSTS -->
+  <!-- GASTOS -->
   <section class="page" id="page-costs">
     <section class="card">
       <div class="cardTop">
@@ -157,39 +159,138 @@
 
       <div class="grid2">
         <div class="field">
-          <label>Contas fixas (total)</label>
-          <input id="fixedCosts" type="number" min="0" step="0.01" placeholder="Ex: 5000" />
+          <label>Contas fixas (total mensal)</label>
+          <input id="fixedCosts" type="number" min="0" step="0.01" placeholder="Ex: 4380" />
         </div>
       </div>
 
-      <div class="hint">Depois eu posso adicionar “variáveis por categoria” (gasolina, mercado, etc.).</div>
+      <div class="hint">Depois adicionamos variáveis (gasolina, etc.).</div>
     </section>
   </section>
 
-  <!-- DEBTS -->
+  <!-- DÍVIDAS (COMPLETO) -->
   <section class="page" id="page-debts">
     <section class="card">
       <div class="cardTop">
-        <h2>Dívidas</h2>
-        <button type="button" class="btn" data-save>Salvar</button>
+        <h2>Dívidas (controle completo)</h2>
+        <div class="row">
+          <button type="button" id="btnAddDebt" class="btn ok">+ Nova dívida</button>
+          <button type="button" id="btnRunProjection" class="btn">Atualizar projeção</button>
+        </div>
       </div>
 
       <div class="grid2">
         <div class="field">
-          <label>Dívida total atual</label>
-          <input id="debtTotal" type="number" min="0" step="0.01" placeholder="Ex: 60000" />
+          <label>Aporte mensal total para dívidas (R$)</label>
+          <input id="debtBudgetMonthly" type="number" min="0" step="0.01" placeholder="Ex: 2000" />
         </div>
+
         <div class="field">
-          <label>Aporte mensal em dívidas</label>
-          <input id="debtPay" type="number" min="0" step="0.01" placeholder="Ex: 4000" />
+          <label>Estratégia de quitação</label>
+          <select id="debtStrategy">
+            <option value="avalanche">Avalanche (maior juros primeiro)</option>
+            <option value="snowball">Snowball (menor saldo primeiro)</option>
+          </select>
         </div>
       </div>
 
-      <div class="hint">A projeção é sem juros (pra simplicidade).</div>
+      <div class="stats">
+        <div class="stat"><span>Total em dívidas (saldo)</span><strong id="debtsTotal">R$ 0,00</strong></div>
+        <div class="stat"><span>Pago no total</span><strong id="debtsPaidTotal">R$ 0,00</strong></div>
+        <div class="stat"><span>Parcelas mínimas (mês)</span><strong id="debtsMinTotal">R$ 0,00</strong></div>
+        <div class="stat"><span>Previsão para zerar</span><strong id="debtsETA">—</strong></div>
+      </div>
+
+      <hr />
+
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Dívida</th>
+              <th>Saldo</th>
+              <th>Juros (a.m.)</th>
+              <th>Mínimo/mês</th>
+              <th>Venc.</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="debtsBody"></tbody>
+        </table>
+      </div>
+
+      <div class="hint">
+        Juros pode ser 0%. A projeção funciona com ou sem juros.
+      </div>
     </section>
+
+    <!-- Modal: Nova/Editar dívida -->
+    <div class="modal hidden" id="debtModal">
+      <div class="modalCard">
+        <div class="modalTop">
+          <h3 id="debtModalTitle">Nova dívida</h3>
+          <button type="button" class="btn ghost" id="btnCloseDebtModal">Fechar</button>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Nome</label>
+            <input id="debtName" type="text" placeholder="Ex: Cartão Nubank, Empréstimo..." />
+          </div>
+          <div class="field">
+            <label>Saldo atual (R$)</label>
+            <input id="debtBalance" type="number" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label>Juros ao mês (%) (opcional)</label>
+            <input id="debtAprMonthly" type="number" min="0" step="0.01" placeholder="Ex: 10" />
+          </div>
+          <div class="field">
+            <label>Parcela mínima/mês (R$) (opcional)</label>
+            <input id="debtMinPay" type="number" min="0" step="0.01" placeholder="Ex: 250" />
+          </div>
+          <div class="field">
+            <label>Vencimento (dia do mês) (opcional)</label>
+            <input id="debtDueDay" type="number" min="1" max="31" step="1" placeholder="Ex: 10" />
+          </div>
+        </div>
+
+        <div class="row">
+          <button type="button" id="btnSaveDebt" class="btn ok">Salvar dívida</button>
+          <button type="button" id="btnDeleteDebt" class="btn danger hidden">Remover</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Registrar pagamento -->
+    <div class="modal hidden" id="payModal">
+      <div class="modalCard">
+        <div class="modalTop">
+          <h3 id="payModalTitle">Registrar pagamento</h3>
+          <button type="button" class="btn ghost" id="btnClosePayModal">Fechar</button>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Valor pago (R$)</label>
+            <input id="payAmount" type="number" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label>Data</label>
+            <input id="payDate" type="date" />
+          </div>
+        </div>
+
+        <div class="row">
+          <button type="button" id="btnConfirmPay" class="btn ok">Confirmar pagamento</button>
+        </div>
+
+        <div class="hint">O pagamento reduz o saldo e entra no histórico de pagamentos.</div>
+      </div>
+    </div>
   </section>
 
-  <!-- RESERVE -->
+  <!-- RESERVA -->
   <section class="page" id="page-reserve">
     <section class="card">
       <div class="cardTop">
@@ -204,7 +305,7 @@
         </div>
         <div class="field">
           <label>Aporte mensal na reserva</label>
-          <input id="reserveAdd" type="number" min="0" step="0.01" placeholder="Ex: 1200" />
+          <input id="reserveAdd" type="number" min="0" step="0.01" placeholder="Ex: 200" />
         </div>
       </div>
 
@@ -215,11 +316,11 @@
     </section>
   </section>
 
-  <!-- HISTORY -->
+  <!-- HISTÓRICO -->
   <section class="page" id="page-history">
     <section class="card">
       <div class="cardTop">
-        <h2>Histórico</h2>
+        <h2>Histórico (fechamento de mês)</h2>
         <div class="row">
           <button type="button" id="btnClearHistory" class="btn ghost">Limpar histórico</button>
         </div>
@@ -243,7 +344,7 @@
         </table>
       </div>
 
-      <div class="hint">Feche o mês no Dashboard pra alimentar esse histórico.</div>
+      <div class="hint">Fechar mês no Dashboard salva aqui e atualiza “Dívida total” e “Reserva atual”.</div>
     </section>
   </section>
 
