@@ -197,3 +197,199 @@ table{width:100%; border-collapse:collapse; min-width:900px}
 th,td{padding:10px; border-bottom:1px solid rgba(255,255,255,.08); text-align:left; font-size:13px}
 th{color:var(--muted); font-weight:900; background: rgba(255,255,255,.02)}
 tbody tr:hover{background: rgba(255,255,255,.03)}
+
+/* Remove a barra de alocação do topo */
+.barWrap { display: none !important; }
+
+/* ===== UI UPGRADE (cole no FINAL do style.css) ===== */
+
+/* Ajustes gerais de tipografia e espaçamento */
+:root{
+  --radius: 18px;
+  --radiusSm: 14px;
+
+  --glass: rgba(255,255,255,.06);
+  --glass2: rgba(255,255,255,.035);
+  --stroke2: rgba(255,255,255,.12);
+
+  --shadow1: 0 14px 40px rgba(0,0,0,.40);
+  --shadow2: 0 10px 26px rgba(0,0,0,.30);
+
+  --accent: rgba(90,168,255,.95);
+  --accent2: rgba(125,255,178,.85);
+}
+
+body{
+  letter-spacing: .2px;
+}
+
+.wrap{ padding:16px; }
+
+/* Header mais elegante */
+.header{
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(7,10,18,.92), rgba(7,10,18,.40));
+}
+
+.header h1{
+  font-weight: 900;
+  font-size: 24px;
+}
+
+.header p{
+  opacity: .9;
+}
+
+/* Botões do topo (Exportar/Importar/Zerar) mais “app” */
+.headerBtns .btn{
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 8px 22px rgba(0,0,0,.25);
+  backdrop-filter: blur(10px);
+}
+.headerBtns .btn:hover{
+  background: rgba(255,255,255,.10);
+}
+.headerBtns .btn.danger{
+  background: rgba(255,77,79,.12);
+  border-color: rgba(255,77,79,.30);
+}
+
+/* Tabs mais bonitas (menos “botão padrão”) */
+.tabs{
+  gap: 12px;
+  padding: 12px 0 16px;
+}
+.tab{
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  box-shadow: 0 10px 22px rgba(0,0,0,.22);
+}
+.tab:hover{
+  background: rgba(255,255,255,.08);
+}
+.tab.active{
+  background: linear-gradient(180deg, rgba(90,168,255,.22), rgba(90,168,255,.10));
+  border-color: rgba(90,168,255,.55);
+  box-shadow: 0 14px 30px rgba(90,168,255,.10);
+}
+
+/* Cards mais “glass” */
+.card{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  box-shadow: var(--shadow1);
+}
+
+/* Título do card + botões alinhados */
+.cardTop{
+  margin-bottom: 6px;
+}
+.cardTop h2{
+  font-size: 19px;
+  font-weight: 900;
+}
+
+/* Inputs mais “premium” */
+.field input, .field select{
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.045);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.field input::placeholder{
+  color: rgba(168,183,214,.65);
+}
+.field input:focus, .field select:focus{
+  border-color: rgba(90,168,255,.55);
+  box-shadow: 0 0 0 4px rgba(90,168,255,.12);
+}
+
+/* Botões “principal / ok / ghost” mais bonitos */
+.btn{
+  border-radius: 999px;
+  padding: 11px 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.07);
+  box-shadow: var(--shadow2);
+}
+.btn:hover{
+  background: rgba(255,255,255,.11);
+}
+.btn.ok{
+  border-color: rgba(45,212,191,.35);
+  background: linear-gradient(180deg, rgba(45,212,191,.22), rgba(45,212,191,.10));
+  box-shadow: 0 16px 34px rgba(45,212,191,.12);
+}
+.btn.ghost{
+  background: rgba(255,255,255,.03);
+}
+
+/* Stats com mais destaque */
+.stat{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+}
+.stat strong{
+  font-size: 20px;
+  font-weight: 900;
+}
+.stat span{
+  font-weight: 700;
+  opacity: .95;
+}
+
+/* Separadores */
+hr{
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+/* Barrinha de alocação fica mais suave (se você ainda usar) */
+.bar{
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.02);
+}
+.seg.fixed{ filter: saturate(1.1); }
+.seg.debt{ filter: saturate(1.1); }
+.seg.reserve{ filter: saturate(1.1); }
+.seg.left{ filter: saturate(1.1); }
+
+/* Tabela mais “clean” */
+.tableWrap{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.02);
+}
+th{
+  background: rgba(255,255,255,.03);
+  font-weight: 900;
+}
+tbody tr:hover{
+  background: rgba(90,168,255,.06);
+}
+
+/* Mobile: deixa os botões e tabs mais fáceis de tocar */
+@media (max-width: 900px){
+  .headerBtns{ gap: 8px; }
+  .headerBtns .btn{ padding: 11px 14px; }
+
+  .tabs{
+    overflow:auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+  }
+  .tab{ padding: 11px 14px; }
+
+  .card{ padding: 14px; }
+  .stat strong{ font-size: 19px; }
+}
