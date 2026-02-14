@@ -7,11 +7,26 @@
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+
+  <!-- LOCK SCREEN -->
+  <div id="lockScreen" class="lock hidden">
+    <div class="lockCard">
+      <h2>🔒 Protegido por PIN</h2>
+      <p>Digite seu PIN para acessar.</p>
+      <div class="lockRow">
+        <input id="pinInput" type="password" inputmode="numeric" placeholder="PIN" />
+        <button id="btnUnlock" class="btn ok">Entrar</button>
+      </div>
+      <small class="muted">Obs: é proteção local (não é “banco”).</small>
+    </div>
+  </div>
+
   <header class="wrap">
     <div class="title">
       <h1>Controle de Grana</h1>
-      <p>Renda • Contas • Aportes • Dívida • Reserva (salva no navegador)</p>
+      <p>Renda • Contas • Aportes • Dívida • Reserva • Metas • Gráficos (salva no navegador)</p>
     </div>
+
     <div class="actions">
       <button id="btnExport" class="btn ghost">Exportar JSON</button>
       <label class="btn ghost file">
@@ -23,12 +38,138 @@
   </header>
 
   <main class="wrap grid">
+
+    <!-- SETTINGS / SECURITY -->
     <section class="card">
-      <h2>Entradas do mês</h2>
+      <h2>Configurações</h2>
 
       <div class="grid2">
         <div class="field">
-          <label>Renda (Uber / sua)</label>
+          <label>Modo Uber (calcular sua renda automaticamente)</label>
+          <select id="uberMode">
+            <option value="manual">Manual (você digita renda mensal)</option>
+            <option value="auto">Automático (diária + bônus + dias)</option>
+            <option value="weekly">Semanal (você preenche por semana)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Dias no mês (padrão 30 / Uber real 25)</label>
+          <select id="workDays">
+            <option value="30">30 dias</option>
+            <option value="25">25 dias</option>
+          </select>
+        </div>
+      </div>
+
+      <hr />
+
+      <h3 class="sub">PIN (proteção local)</h3>
+      <div class="grid2">
+        <div class="field">
+          <label>Novo PIN</label>
+          <input id="pinNew" type="password" inputmode="numeric" placeholder="Crie um PIN (ex: 1234)" />
+        </div>
+        <div class="field">
+          <label>Confirmar PIN</label>
+          <input id="pinConfirm" type="password" inputmode="numeric" placeholder="Confirme o PIN" />
+        </div>
+      </div>
+      <div class="row">
+        <button id="btnSetPin" class="btn">Salvar PIN</button>
+        <button id="btnRemovePin" class="btn danger">Remover PIN</button>
+      </div>
+
+      <p class="hint">PIN só bloqueia no seu aparelho/navegador. Se apagar o storage, some.</p>
+    </section>
+
+    <!-- GOALS -->
+    <section class="card">
+      <h2>Metas</h2>
+      <div class="grid2">
+        <div class="field">
+          <label>Meta: ficar sem dívidas até</label>
+          <input id="goalDebtDate" type="month" />
+        </div>
+        <div class="field">
+          <label>Meta: reserva (meses de contas)</label>
+          <select id="goalReserveMonths">
+            <option value="3">3 meses</option>
+            <option value="6" selected>6 meses</option>
+            <option value="9">9 meses</option>
+            <option value="12">12 meses</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span>Previsão quitação (estim.)</span>
+          <strong id="goalDebtETA">—</strong>
+        </div>
+        <div class="stat">
+          <span>Status meta dívidas</span>
+          <strong id="goalDebtStatus">—</strong>
+        </div>
+        <div class="stat">
+          <span>Meta reserva (R$)</span>
+          <strong id="goalReserveValue">R$ 0,00</strong>
+        </div>
+        <div class="stat">
+          <span>Meses p/ bater a meta reserva</span>
+          <strong id="goalReserveETA">—</strong>
+        </div>
+      </div>
+
+      <p class="hint">Tudo aqui é estimativa simples (sem juros). Serve pra direção.</p>
+    </section>
+
+    <!-- INPUTS -->
+    <section class="card full">
+      <h2>Entradas do mês</h2>
+
+      <!-- Uber AUTO -->
+      <div id="uberAutoBox" class="subbox hidden">
+        <h3 class="sub">Uber automático</h3>
+        <div class="grid2">
+          <div class="field">
+            <label>Diária (R$)</label>
+            <input id="uberDaily" type="number" min="0" step="0.01" placeholder="Ex: 200" />
+          </div>
+          <div class="field">
+            <label>Bônus (% sobre a diária anterior fixada)</label>
+            <input id="uberBonusPct" type="number" min="0" step="0.01" placeholder="Ex: 20" />
+          </div>
+        </div>
+        <p class="hint">Ex: 200 + 20% = 240/dia. Com 30 dias: 7.200.</p>
+      </div>
+
+      <!-- Uber WEEKLY -->
+      <div id="uberWeeklyBox" class="subbox hidden">
+        <h3 class="sub">Uber semanal</h3>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Semana</th>
+                <th>Quanto entrou (R$)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Semana 1</td><td><input id="w1" class="tableInput" type="number" min="0" step="0.01" placeholder="0" /></td></tr>
+              <tr><td>Semana 2</td><td><input id="w2" class="tableInput" type="number" min="0" step="0.01" placeholder="0" /></td></tr>
+              <tr><td>Semana 3</td><td><input id="w3" class="tableInput" type="number" min="0" step="0.01" placeholder="0" /></td></tr>
+              <tr><td>Semana 4</td><td><input id="w4" class="tableInput" type="number" min="0" step="0.01" placeholder="0" /></td></tr>
+              <tr><td>Semana 5 (se tiver)</td><td><input id="w5" class="tableInput" type="number" min="0" step="0.01" placeholder="0" /></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">Preenche o que entrou por semana e o sistema soma sua renda do mês.</p>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Sua renda do mês (Uber) — (manual OU calculada)</label>
           <input id="incomeYou" type="number" min="0" step="0.01" placeholder="Ex: 7200" />
         </div>
         <div class="field">
@@ -69,11 +210,10 @@
         <button id="btnCloseMonth" class="btn ok">Fechar mês (salvar histórico)</button>
       </div>
 
-      <p class="hint">
-        Dica: isso não envia nada pra internet. Fica só no seu navegador (localStorage).
-      </p>
+      <p class="hint">Tudo fica só no seu navegador (localStorage). Pode exportar/importar JSON.</p>
     </section>
 
+    <!-- SUMMARY -->
     <section class="card">
       <h2>Resumo</h2>
 
@@ -112,7 +252,7 @@
           <strong id="sumReserveAfter">R$ 0,00</strong>
         </div>
         <div class="stat">
-          <span>Meta reserva (6x contas)</span>
+          <span>Meta reserva (auto)</span>
           <strong id="sumReserveGoal">R$ 0,00</strong>
         </div>
       </div>
@@ -137,6 +277,21 @@
       </div>
     </section>
 
+    <!-- CHARTS -->
+    <section class="card">
+      <h2>Gráficos</h2>
+      <div class="chartBox">
+        <h3 class="sub">Histórico: Dívida x Reserva</h3>
+        <canvas id="chartHistory" width="520" height="260"></canvas>
+      </div>
+      <div class="chartBox">
+        <h3 class="sub">Distribuição do mês</h3>
+        <canvas id="chartAlloc" width="520" height="260"></canvas>
+      </div>
+      <p class="hint">Gráficos simples, sem libs externas (roda liso no GitHub Pages).</p>
+    </section>
+
+    <!-- HISTORY -->
     <section class="card full">
       <h2>Histórico (meses fechados)</h2>
       <div class="row">
