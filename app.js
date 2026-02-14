@@ -670,3 +670,57 @@ $("uberMode").addEventListener("change", () => {
   const temp = readInputs(state);
   updateModeUI(temp);
 });
+
+// ---------- Tabs (pages) ----------
+function openTab(tabName){
+  document.querySelectorAll(".tab").forEach(b=>{
+    b.classList.toggle("active", b.dataset.tab === tabName);
+  });
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.toggle("active", p.id === `page-${tabName}`);
+  });
+}
+
+document.getElementById("tabs")?.addEventListener("click", (e)=>{
+  const btn = e.target.closest(".tab");
+  if(!btn) return;
+  openTab(btn.dataset.tab);
+});
+
+// Default
+openTab("dash");
+
+// ---------- Extra save buttons by section ----------
+document.getElementById("btnSaveCosts")?.addEventListener("click", ()=>{
+  state = readInputs(state);
+  if(state.uberMode !== "manual") state.incomeYou = calcUberIncome(state);
+  saveState(state);
+  fullRender();
+});
+
+document.getElementById("btnSaveDebts")?.addEventListener("click", ()=>{
+  state = readInputs(state);
+  if(state.uberMode !== "manual") state.incomeYou = calcUberIncome(state);
+  saveState(state);
+  fullRender();
+});
+
+document.getElementById("btnSaveReserve")?.addEventListener("click", ()=>{
+  state = readInputs(state);
+  if(state.uberMode !== "manual") state.incomeYou = calcUberIncome(state);
+  saveState(state);
+  fullRender();
+});
+
+// Mirror export/import buttons on History tab (optional)
+document.getElementById("btnExport2")?.addEventListener("click", ()=> exportJSON(state));
+document.getElementById("fileImport2")?.addEventListener("change", (e)=>{
+  const file = e.target.files?.[0];
+  if(!file) return;
+  importJSON(file, (newState) => {
+    state = newState;
+    saveState(state);
+    fullRender();
+    e.target.value = "";
+  });
+});
