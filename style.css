@@ -187,3 +187,29 @@ canvas{width:100%; height:auto; border-radius:10px; background: rgba(0,0,0,.12);
   .grid2{grid-template-columns:1fr}
   .stats{grid-template-columns:1fr}
 }
+
+/* Tabs */
+.tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin: 10px 0 16px;
+}
+.tab{
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  cursor:pointer;
+  font-weight:700;
+}
+.tab:hover{ background: rgba(255,255,255,.08); }
+.tab.active{
+  border-color: rgba(90,168,255,.55);
+  background: rgba(90,168,255,.12);
+}
+
+/* Pages */
+.page{ display:none; }
+.page.active{ display:block; }
