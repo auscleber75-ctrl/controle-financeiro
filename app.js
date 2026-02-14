@@ -724,3 +724,30 @@ document.getElementById("fileImport2")?.addEventListener("change", (e)=>{
     e.target.value = "";
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  function openTab(tabName){
+    document.querySelectorAll(".tab").forEach(b=>{
+      b.classList.toggle("active", b.dataset.tab === tabName);
+    });
+    document.querySelectorAll(".page").forEach(p=>{
+      p.classList.toggle("active", p.id === `page-${tabName}`);
+    });
+  }
+
+  const tabs = document.getElementById("tabs");
+  if(!tabs){
+    console.error('Não achei o nav id="tabs".');
+    return;
+  }
+
+  tabs.addEventListener("click", (e)=>{
+    const btn = e.target.closest(".tab");
+    if(!btn) return;
+    openTab(btn.dataset.tab);
+  });
+
+  // abre a primeira aba automaticamente
+  const first = tabs.querySelector(".tab")?.dataset.tab || "dash";
+  openTab(first);
+});
